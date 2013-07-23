@@ -1,0 +1,46 @@
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<fxpq version="0.1">
+
+    <object id="dim_manafia" type="Fxp2.Dimension">
+    
+        <node id="info">
+            <key id="name" type="string">Manafia</key>
+            <key id="author" type="string">EuhMeuh</key>
+            <key id="license" type="string">GNU General Public License (GPL)</key>
+            <key id="style" type="string">Adventure</key>
+            <key id="desc" type="string">A magic land discovered by EuhMeuh.</key>
+            <key id="last_changes" type="string">Fri, 22 Feb 2013 22:50:32 +0100</key>
+        </node>
+    
+        <node id="config">
+            <key id="starting_map" type="string">map_golfia</key>
+        </node>
+        
+        <!-- 
+            exec : start - once when loading the context
+                   loop  - always when the object is active
+                   call  - only if explicitely called
+            
+            object (optional) : the object the script is refering to
+        -->
+        <script exec="start" object="dim_manafia" >
+INIT()
+{
+    -- info --
+    SET FXP2_DIMENSION_NAME                  :info:name
+    SET FXP2_DIMENSION_AUTHOR                :info:author
+    SET FXP2_DIMENSION_LICENSE               :info:license
+    SET FXP2_DIMENSION_STYLE                 :info:style
+    SET FXP2_DIMENSION_DESCRIPTION           :info:desc
+    SET FXP2_DIMENSION_LASTCHANGES           :info:last_changes
+    
+    -- config --
+    SET FXP2_DIMENSION_STARTING_MAP          :config:starting_map
+}
+        </script>
+    
+    </object>
+    
+</fxpq>
+

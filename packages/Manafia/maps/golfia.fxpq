@@ -1,0 +1,33 @@
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpq version="0.1">
+
+    <object id="map_golfia" type="Fxp2.Map">
+    
+        <node id="info">
+            <key id="name" type="string">Golfia</key>
+            <key id="desc" type="string">Grass, trees, birds, bees, snails, larvas, lethal spikes...</key>
+        </node>
+        
+        <node id="config">
+            <key id="start_x" type="integer">0</key>
+            <key id="start_y" type="integer">0</key>
+        </node>
+        
+        <script exec="start" object="map_golfia">
+INIT()
+{
+    -- info --
+    SET FXP2_MAP_NAME                  :info:name
+    SET FXP2_MAP_DESCRIPTION           :info:desc
+    
+    -- config --
+    SET FXP2_MAP_START_X               :config:start_x
+    SET FXP2_MAP_START_Y               :config:start_y
+}
+        </script>
+    
+    </object>
+    
+</fxpq>
+

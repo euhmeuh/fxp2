@@ -1,0 +1,22 @@
+<palette name="Rilouw">
+    <colorkey>0,0,0</colorkey>
+    <default>Beige</default>
+    
+    <color name="Beige">
+        <value tone="dark">204,161,102</value>
+        <value tone="medium">255,213,128</value>
+        <value tone="light">255,239,191</value>
+    </color>
+    
+    <color name="Orange">
+        <value tone="dark">204,102,0</value>
+        <value tone="medium">255,150,0</value>
+        <value tone="light">255,196,77</value>
+    </color>
+    
+    <color name="Brown">
+        <value tone="dark">153,63,0</value>
+        <value tone="medium">192,96,0</value>
+        <value tone="light">204,145,61</value>
+    </color>
+</palette>

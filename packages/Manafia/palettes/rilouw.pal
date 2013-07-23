@@ -1,0 +1,88 @@
+<palette name="Rilouw">
+    <colorkey>0,0,0</colorkey>
+    <default>White</default>
+    
+    <color name="Yellow">
+        <value tone="dark">204,169,0</value>
+        <value tone="medium">255,234,0</value>
+        <value tone="light">255,255,77</value>
+    </color>
+    
+    <color name="Beige">
+        <value tone="dark">204,161,102</value>
+        <value tone="medium">255,213,128</value>
+        <value tone="light">255,239,191</value>
+    </color>
+    
+    <color name="Orange">
+        <value tone="dark">204,102,0</value>
+        <value tone="medium">255,150,0</value>
+        <value tone="light">255,196,77</value>
+    </color>
+    
+    <color name="Brown">
+        <value tone="dark">153,63,0</value>
+        <value tone="medium">192,96,0</value>
+        <value tone="light">204,145,61</value>
+    </color>
+    
+    <color name="Green">
+        <value tone="dark">27,153,16</value>
+        <value tone="medium">0,191,0</value>
+        <value tone="light">0,230,19</value>
+    </color>
+    
+    <color name="Jungle">
+        <value tone="dark">114,153,0</value>
+        <value tone="medium">126,191,0</value>
+        <value tone="light">162,217,87</value>
+    </color>
+    
+    <color name="Cyan">
+        <value tone="dark">102,204,161</value>
+        <value tone="medium">128,255,213</value>
+        <value tone="light">179,255,236</value>
+    </color>
+    
+    <color name="Blue">
+        <value tone="dark">0,119,204</value>
+        <value tone="medium">0,149,255</value>
+        <value tone="light">77,182,255</value>
+    </color>
+    
+    <color name="Sea">
+        <value tone="dark">0,14,166</value>
+        <value tone="medium">45,25,255</value>
+        <value tone="light">103,89,255</value>
+    </color>
+    
+    <color name="Purple">
+        <value tone="dark">85,0,204</value>
+        <value tone="medium">128,0,255</value>
+        <value tone="light">181,77,255</value>
+    </color>
+    
+    <color name="Pink">
+        <value tone="dark">179,0,104</value>
+        <value tone="medium">255,0,126</value>
+        <value tone="light">255,89,158</value>
+    </color>
+    
+    <color name="Red">
+        <value tone="dark">204,0,17</value>
+        <value tone="medium">255,0,0</value>
+        <value tone="light">255,80,64</value>
+    </color>
+    
+    <color name="Black">
+        <value tone="dark">26,26,26</value>
+        <value tone="medium">50,50,50</value>
+        <value tone="light">102,102,102</value>
+    </color>
+    
+    <color name="White">
+        <value tone="dark">180,180,180</value>
+        <value tone="medium">203,203,203</value>
+        <value tone="light">230,230,230</value>
+    </color>
+</palette>

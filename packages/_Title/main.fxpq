@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<fxpq version="1.0">
+
+    <object id="dim_title" type="Fxp.Dimension">
+
+        <node id="info">
+            <key id="name" type="string">Title screen</key>
+            <key id="author" type="string">EuhMeuh</key>
+            <key id="license" type="string">GNU General Public License (GPL)</key>
+            <key id="style" type="string">Misc</key>
+            <key id="description" type="string">The title screen allows to choose a server.</key>
+            <key id="last_changes" type="string">Thu, 04 Apr 2013 20:07:21 +0200</key>
+        </node>
+    
+        <node id="config">
+            <key id="starting_zone" type="string">zon_title</key>
+        </node>
+
+        <child id="objects/zon_title" />
+    
+    </object>
+
+</fxpq>
+

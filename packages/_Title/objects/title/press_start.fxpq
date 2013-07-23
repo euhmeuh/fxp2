@@ -1,0 +1,42 @@
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<fxpq version="1.0">
+
+    <object id="lbl_press_start" type="Fxp.Label">
+        <script exec="start" >
+
+            self.set_text("Press       to start")
+            self.set_color(context.palette("Blue", "light"),
+                           context.palette("White", "medium"))
+
+        </script>
+    </object>
+
+    <object id="obj_enterkey" type="Fxp.Object">
+        <properties>
+            <rect x="0" y="0" w="0" h="0" />
+            <image src="/common/key_enter.png" autoresize="true" />
+        </properties>
+    </object>
+
+    <object id="obj_press_start" type="Fxp.Object">
+    
+        <properties>
+            <rect x="0" y="0" w="0" h="0" />
+        </properties>
+
+        <script exec="toggle" >
+
+            if (event.type = "click" and self.clicked = True)
+            or (event.type = "keyboard" and event.key = "return")
+                pass # TODO
+
+        </script>
+
+        <child id="lbl_press_start" />
+        <child id="obj_enterkey" />
+
+    </object>
+    
+</fxpq>
+

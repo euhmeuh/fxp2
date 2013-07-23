@@ -1,0 +1,16 @@
+<palette name="Rilouw">
+    <colorkey>0,0,0</colorkey>
+    <default>White</default>
+    
+    <color name="Black">
+        <value tone="dark">26,26,26</value>
+        <value tone="medium">50,50,50</value>
+        <value tone="light">102,102,102</value>
+    </color>
+    
+    <color name="White">
+        <value tone="dark">180,180,180</value>
+        <value tone="medium">203,203,203</value>
+        <value tone="light">230,230,230</value>
+    </color>
+</palette>
