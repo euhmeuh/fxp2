@@ -33,3 +33,14 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# SublimeText
+*.sublime-project
+*.sublime-workspace
+
+# Editor backups
+*~
+
+# Freedesktop launchers
+*.desktop
+
