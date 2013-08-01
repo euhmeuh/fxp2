@@ -33,7 +33,7 @@ class Main:
         self.commands.append(("owner","OWNER", 0))
         self.commands.append(("desc", "DESC",  0))
         self.commands.append(("motd", "MOTD",  0))
-        self.commands.append(("motd", "MOTD",  0))
+        #self.commands.append(("cmd", "CMD {} {}",  2))
         
         # open socket on UDP
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

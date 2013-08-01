@@ -55,7 +55,7 @@ class Client(SocketServer.BaseRequestHandler):
 
 class MasterServer:
     def __init__(self):
-        self.host = "localhost"
+        self.bound = "0.0.0.0"
         self.port = 8448
         self.data = ServerData()
         
@@ -75,10 +75,10 @@ class MasterServer:
         self.log("MOTD:        \""+ self.data.motd + "\"")
 
     def bind(self):
-        self.log("Binding adress "+ self.host +" on port "+ str(self.port))
+        self.log("Binding adress "+ self.bound +" on port "+ str(self.port))
         
         # bind address on UDP
-        self.instance = SocketServer.UDPServer((self.host, self.port), Client)
+        self.instance = SocketServer.UDPServer((self.bound, self.port), Client)
         self.instance.data = self.data
         self.instance.log = self.log
 
