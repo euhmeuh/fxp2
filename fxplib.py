@@ -239,7 +239,8 @@ class Image (Object):
         self.state = "IDLE" # IDLE, MOUSEOVER, CLICKED
         self.surface = None
         self.image = None
-        self.frame = Frame()
+        self.frames = {}
+        self.frame = ""
         self.last_tick = 0
         
         self.focused = False
@@ -476,12 +477,13 @@ class Image (Object):
     def tick(self, time):
         Object.tick(self, time)
 
-        # check if the time spent exceeded the frame delay
-        if time - self.last_tick > self.frame.delay:
-            self.frame.next()
-            self.force = True
+        if self.frames:
+            # check if the time spent exceeded the frame delay
+            if time - self.last_tick > self.frames[self.frame].delay:
+                self.frames[self.frame].next()
+                self.force = True
 
-            self.last_tick = time
+                self.last_tick = time
 
     def refresh(self):
         """ Refresh surface buffer with the original object's image """
@@ -495,15 +497,19 @@ class Image (Object):
         
         if self.image:
             # define rect
-            x, y = self.frame.rect
+            try:
+                x, y = self.frames[self.frame].rect
+            except KeyError:
+                x, y = 0, 0
+
             iw, ih = self.image.get_size()
             if self.h_mode == "mirrored" and self.h_mirrored:
-                x -= iw/2
+                x += iw/2
             if self.v_mode == "mirrored" and self.v_mirrored:
-                y -= ih/2
+                y += ih/2
 
             # blit the image on the buffer
-            self.surface.blit(self.image, (x,y))
+            self.surface.blit(self.image, (-x,-y))
         
         self.force = False
 

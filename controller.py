@@ -81,12 +81,15 @@ class Controller:
             # test keys
             character = self.root.get_child("world/character")
             if character:
+                character.frame = "idle"
                 if inputdev.check_key(Fxp.pygame.K_q):
                     character.apply_vector(self.VECTOR_LEFT)
                     character.flip(state=True)
+                    character.frame = "run"
                 if inputdev.check_key(Fxp.pygame.K_d):
                     character.apply_vector(self.VECTOR_RIGHT)
                     character.flip(state=False)
+                    character.frame = "run"
             
             # update cursor position
             cursor = self.root.get_child("gui/cursor")
