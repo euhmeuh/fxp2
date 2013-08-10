@@ -40,7 +40,7 @@ class Object:
         self.objects = {}
         self.signals = {}
 
-        self.priority = 0
+        self.z = 0
 
     def __repr__(self):
         string = "<Fxp."+self.__class__.__name__+" ("+str(self.name)+")>"
@@ -57,7 +57,7 @@ class Object:
 
     def get_sorted_children(self):
         # return children sorted by priority
-        return sorted(self.objects.values(), key=operator.attrgetter("priority"))
+        return sorted(self.objects.values(), key=operator.attrgetter("z"))
 
     def get_child(self, path):
         name, sep, rest = path.partition("/")
@@ -223,7 +223,7 @@ class Image (Object):
         self.y = 0
         self.w = 0
         self.h = 0
-        self.priority = 0
+        self.z = 0
         
         self.x_offset = 0
         self.y_offset = 0
@@ -418,6 +418,10 @@ class Image (Object):
     def set_grid_size(self, grid_size):
         self.grid_size = grid_size
 
+    def get_center(self):
+        w, h = self.get_size()
+        return (w/2, h/2)
+
     # NOTE : recursive
     def check_force(self):
         if self.display:
@@ -607,12 +611,14 @@ class MovingObject (Image):
             self.apply_vector(vector)
         self.temp_vectors = {}
 
-    def move(self):
-        if(self.velocity != None
-        and not self.fixed):
+    def move(self, vector=None):
+        if not vector:
+            vector = self.velocity
+
+        if(vector and not self.fixed):
             # change the position of the object
-            if self.velocity.enable:
-                x, y = self.velocity.get_pos()
+            if vector.enable:
+                x, y = vector.get_pos()
                 
                 # apply movement
                 self.x += x
@@ -639,53 +645,40 @@ class Camera (MovingObject):
         self.z_dist = 0
         self.zone = None
 
+        self.fixed = True
+
+    def update_vector(self):
+        mx, my = self.get_center()
+        cx, cy = self.target.get_center()
+        px, py = self.target.get_pos()
+
+        x = mx - (px+cx)
+        y = my - (py+cy)
+
+        self.velocity.set_pos((x, y))
+
     def move_all(self, vectors=True, move=True):
         if move:
-            if self.active and self.target:
+            if self.active:
+                # update the camera vector
+                if self.target:
+                    self.update_vector()
+
                 # get the opposite of the target movement
-                x = - self.target.velocity.x
-                y = - self.target.velocity.y
-                
-                # if the target is not centered, move the camera FIXME
-#                if self.zone:
-#                    zx, zy, zw, zh = self.zone
-#                    if self.target.x+self.target.velocity.x > zx+zw:
-#                        x -= 0.5
-#                    elif self.target.x+self.target.velocity.x < zx:
-#                        x += 0.5
-#                    else:
-#                        self.target.fixed = False
-#                    
-#                    if self.target.y+self.target.velocity.y > zy+zh:
-#                        y -= 0.5
-#                        self.target.fixed = True
-#                    elif self.target.y+self.target.velocity.y < zy:
-#                        y += 0.5
-#                        self.target.fixed = True
-#                    else:
-#                        self.target.fixed = False
-                
-                # get sorted children (we'll name them plans)
+                x = self.velocity.x
+                y = self.velocity.y
+
+                # calculate vector distance modifier
+                def distance(z, z_target, priority_diff):
+                    return 1.0 + (z - z_target) / (priority_diff + 1)
+
                 children = self.get_sorted_children()
-                
+                priority_diff = children[-1].z - children[0].z
                 if children:
-                    # get z total distance + 1 (the horizon is not a child)
-                    z = abs(children[0].priority - 1) * self.z_dist
-                
-                    # for every plan
                     for child in children:
-                        # determine distance from the horizon
-                        d = z - abs(child.priority) * self.z_dist
-                        
-                        # find new movement of plan
-                        dx = x * d / z
-                        dy = y * d / z
-                        
-                        # change plan vector
-                        child.velocity.set_pos((dx, dy))
-            else:
-                for child in self.get_sorted_children():
-                    child.velocity.set_pos((0, 0))
+                        d = distance(child.z, self.target.z, priority_diff)
+                        # apply camera vector
+                        child.move(self.velocity * d)
         
         # move children and self
         MovingObject.move_all(self, vectors, move)
@@ -731,17 +724,20 @@ class Background (MovingObject):
     def extend(self, color, horizontal=True):
         pass # TODO
 
-    def move(self):
-        MovingObject.move(self)
+    def move(self, vector=None):
+        MovingObject.move(self, vector)
         
+        if not vector:
+            vector = self.velocity
+
         # horizontal scrolling
         if self.h_mode:
             # check direction
-            if self.velocity.x < 0: # left
+            if vector.x < 0: # left
                 # shift background
                 if(self.x + self.w / 2 <= 0):
                     self.x += self.w / 2
-            elif self.velocity.x > 0: #right
+            elif vector.x > 0: #right
                 # shift background
                 if(self.x + self.w / 2 >= self.w / 2):
                     self.x -= self.w / 2
@@ -749,11 +745,11 @@ class Background (MovingObject):
         # vertical scrolling
         if self.v_mode:
             # check direction
-            if self.velocity.y < 0: # left
+            if vector.y < 0: # left
                 # shift background
                 if(self.y + self.h / 2 <= 0):
                     self.y += self.h / 2
-            elif self.velocity.y > 0: #right
+            elif vector.y > 0: #right
                 # shift background
                 if(self.y + self.h / 2 >= self.h / 2):
                     self.y -= self.h / 2
@@ -1058,10 +1054,16 @@ class World (MovingObject):
             # check for collide forces to apply
             for collide_obj in self.collide_objects:
                 col_name, col_obj = collide_obj
-                if col_obj == obj:
-                    col_vector = self.collide_vectors[col_name](col_obj, obstacle,
+                # apply collision to the object
+                if col_obj is obj:
+                    col_vector = self.collide_vectors[col_name](obj, obstacle,
                                                                 rect, orect)
-                    col_obj.apply_vector(col_vector)
+                    obj.apply_vector(col_vector)
+                # apply collision to the obstacle
+                elif col_obj is obstacle:
+                    col_vector = self.collide_vectors[col_name](obstacle, obj,
+                                                                orect, rect)
+                    obstacle.apply_vector(col_vector)
         
         solid_list = []
         get_solid(self, self.get_pos(), solid_list)

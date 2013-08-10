@@ -78,8 +78,8 @@ class View:
         root = Fxp.Dimension("packages/_Title")
 
         # define priorities
-        gui.priority = 1
-        cursor.priority = 10
+        gui.z = 1
+        cursor.z = 10
 
         # pack objects
         gui.add_child(cursor)
@@ -149,13 +149,13 @@ class View:
         thumbnail.apply_vector(force_scrolling)
         
         # define priorities
-        thumbnail.priority = -2
-        mask.priority = -1
-        title.priority = 0
-        enterkey.priority = 0
-        label_start.priority = 0
-        gui.priority = 1
-        cursor.priority = 10
+        thumbnail.z = -2
+        mask.z = -1
+        title.z = 0
+        enterkey.z = 0
+        label_start.z = 0
+        gui.z = 1
+        cursor.z = 10
         
         # pack objects
         gui.add_child(cursor)
@@ -185,6 +185,7 @@ class View:
         camera = Fxp.Camera("camera")
         camera.set_size(self.get_size())
         camera.init_surface(self.get_size())
+        camera.make_movable()
         
         # create physics world
         world = Fxp.World("world")
@@ -265,6 +266,36 @@ class View:
 #            robj.set_pos((rx+2,ry+2))
 #            ground2.add_child(robj)
 #            loop += 1
+
+        # I'd like to be a tree !
+        tree = Fxp.MovingObject("tree")
+        tree.load_from_file("packages/Manafia/maps/Golfia/tree.png")
+        tree.set_pos((272,96))
+        tree.make_movable()
+        tree.solid = True
+        tree.hitboxes.append((18,6,40,1))
+
+        # portals, now we're getting serious...
+        portal = Fxp.MovingObject("portal")
+        portal.load_from_file('packages/Manafia/maps/Golfia/portal.png')
+        portal.set_pos((112,96))
+        portal.set_size((160,160))
+
+        portal_frames = {}
+
+        portal_frames["idle"] = Fxp.Frame((
+            (200, (0,0)),
+            (200, (160,0)),
+            (200, (160*2,0)),
+            (200, (160*3,0)),
+            (200, (160*4,0)),
+            (200, (160*5,0)),
+            (200, (160*6,0)),
+            (200, (160*7,0))
+            ))
+
+        portal.frames = portal_frames
+        portal.frame = "idle"
         
         # character
         character = Fxp.MovingObject("character")
@@ -276,19 +307,18 @@ class View:
         character.solid = True
         character.hitboxes.append((13,16,25,30))
 
-        frames = {}
+        char_frames = {}
 
-        frames["idle"] = Fxp.Frame((
+        char_frames["idle"] = Fxp.Frame((
             (100, (0,0)),
             (100, (42,0)),
-            (100, (42*2,0)),
+            (200, (42*2,0)),
             (100, (42*3,0)),
             (100, (42*4,0)),
-            (100, (42*5,0)),
-            (100, (42*6,0))
+            (100, (42*5,0))
             ))
 
-        frames["run"] = Fxp.Frame((
+        char_frames["run"] = Fxp.Frame((
             (100, (0,46)),
             (100, (42,46)),
             (100, (42*2,46)),
@@ -299,7 +329,7 @@ class View:
             (150, (42*7,46))
             ))
 
-        character.frames = frames
+        character.frames = char_frames
         character.frame = "idle"
                 
         # create buttons   
@@ -330,6 +360,7 @@ class View:
         window = Fxp.Window("window")
         window.set_grid_size(self.grid_size)
         window.set_rect((21,8,21,11), grid=True)
+        window.display = False
         
         # fps counter
         label_fps = Fxp.Label("label_fps", "00",
@@ -359,29 +390,31 @@ class View:
         
         world.add_env_vector("air_friction", create_air_friction)
         world.add_env_object("air_friction", character)
+        world.add_env_object("air_friction", cloud1)
+        world.add_env_object("air_friction", cloud2)
         
         world.add_collide_vector("repulsion", Fxp.simple_repulsion)
         world.add_collide_object("repulsion", character)
         
         # define priorities
-        horizon.priority     = -1
-        camera.priority      = 0
-        mountain1.priority   = -4
-        mountain2.priority   = -3
-        cloud1.priority      = -2
-        cloud2.priority      = -2
-        ground1.priority     = -1
-        ground2.priority     = 0
-        character.priority   = 1
-        gui.priority         = 1
-        world.priority       = 0
-        window.priority      = 0
-        button_options.priority    = 1
-        separator.priority         = 1
-        button_disconnect.priority = 1
-        button_quit.priority       = 1
-        label_fps.priority   = 9
-        cursor.priority      = 10
+        horizon.z     = -1.0
+        camera.z      = 0.0
+        mountain1.z   = -4.0
+        mountain2.z   = -3.0
+        cloud1.z      = -2.0
+        cloud2.z      = -2.0
+        ground1.z     = -1.0
+        ground2.z     = 0.0
+        character.z   = 1.0
+        gui.z         = 1.0
+        world.z       = 0.0
+        window.z      = 0.0
+        button_options.z    = 1.0
+        separator.z         = 1.0
+        button_disconnect.z = 1.0
+        button_quit.z       = 1.0
+        label_fps.z   = 9.0
+        cursor.z      = 10.0
         
         # define camera target
         camera.target = character
@@ -395,9 +428,11 @@ class View:
         camera.add_child(cloud2)
         camera.add_child(ground1)
         camera.add_child(ground2)
+        camera.add_child(tree)
+        camera.add_child(portal)
+        camera.add_child(character)
         
         world.add_child(camera)
-        world.add_child(character)
         
         window.add_child(button_options)
         window.add_child(separator)
@@ -411,11 +446,6 @@ class View:
         root.add_child(world)
         root.add_child(gui)
         root.add_child(inputdev)
-        
-        # disable some objects here (testing purpose)
-        window.display = False
-        
-        character.fixed = True
         
         # give the controller access to the root object
         self.root = root

@@ -79,7 +79,7 @@ class Controller:
                 mouse_pos = (mouse_pos[0] / 2, mouse_pos[1] / 2)
             
             # test keys
-            character = self.root.get_child("world/character")
+            character = self.root.get_child("world/camera/character")
             if character:
                 character.frame = "idle"
                 if inputdev.check_key(Fxp.pygame.K_q):
@@ -136,16 +136,15 @@ class Controller:
             window = self.root.get_child("gui/window")
             window.switch()
         if key == Fxp.pygame.K_f:
-            character = self.root.get_child("world/character")
+            character = self.root.get_child("world/camera/character")
             camera = self.root.get_child("world/camera")
-            if camera.active:
-                character.fixed = False
-                camera.active = False
-            else:
-                character.fixed = True
-                camera.active = True
+            camera.target = character
+        if key == Fxp.pygame.K_g:
+            tree = self.root.get_child("world/camera/tree")
+            camera = self.root.get_child("world/camera")
+            camera.target = tree
         if key == Fxp.pygame.K_z:
-            self.root.get_child("world/character").apply_vector(self.VECTOR_UP)
+            self.root.get_child("world/camera/character").apply_vector(self.VECTOR_UP)
 
     def on_button_disconnect_click(self, obj, response=None, data=None):
         self.load_title()
