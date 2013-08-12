@@ -216,7 +216,7 @@ class View:
         
         cloud2 = Fxp.MovingObject("cloud2")
         cloud2.load_from_file("packages/Manafia/maps/Golfia/cloud2.png")
-        cloud2.set_pos((384,-64))
+        cloud2.set_pos((384,-32))
         cloud2.make_movable()
         
         # ground
@@ -301,8 +301,8 @@ class View:
         character = Fxp.MovingObject("character")
         character.load_from_file("packages/Manafia/common/euhmeuh.png")
         character.set_size((42,46))
-        character.set_pos((128,128))
-        character.mirror()
+        character.set_pos((235,169))
+        character.mirror(rect=(42,46))
         character.make_movable()
         character.solid = True
         character.hitboxes.append((13,16,25,30))
@@ -374,12 +374,12 @@ class View:
         root.scale = self.scale
         
         # create forces
-        force_wind = Fxp.Vector("wind", (0.35,1))
+        force_wind = Fxp.Vector("wind", (0.035,1))
         gravity = Fxp.Vector("gravity", (0.5,0.5))
         
         # apply forces
-        cloud1.add_const_vector(force_wind)
-        cloud2.add_const_vector(force_wind)
+        #cloud1.add_const_vector(force_wind)
+        #cloud2.add_const_vector(force_wind)
         character.add_const_vector(gravity)
         
         # add world air friction
@@ -402,7 +402,7 @@ class View:
         mountain1.z   = -4.0
         mountain2.z   = -3.0
         cloud1.z      = -2.0
-        cloud2.z      = -2.0
+        cloud2.z      = -3.5
         ground1.z     = -1.0
         ground2.z     = 0.0
         character.z   = 1.0

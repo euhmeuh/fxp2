@@ -279,7 +279,7 @@ class Image (Object):
     def init_surface(self, size):
         self.surface = Surface(size)
 
-    def mirror(self, horizontal=True):
+    def mirror(self, horizontal=True, rect=None):
         """ Load a mirrored copy of the image in memory
             that will be used when flip() is called.
 
@@ -291,6 +291,11 @@ class Image (Object):
             normal version, and the second part being the mirrored one.
 
             Everything will be on the *same* surface!
+
+            The optional "rect" argument must be used when the image
+            is composed of multiple frames. It specifies the size of
+            the frames, so that the mirror is applied to each, starting
+            from the upper-left corner.
         """
         # if the image is not set, we quit
         if not self.image:
@@ -317,13 +322,31 @@ class Image (Object):
         # blit self image on the new surface
         temp.blit(self.image, (0,0))
 
-        # blit flipped image
-        if horizontal:
-            img = pygame.transform.flip(self.image, True, False)
-            temp.blit(img, (iw, 0))
+        # check optional rect argument
+        if rect:
+            rw = rect[0]
+            rh = rect[1]
+            t = Surface((rw, rh))
         else:
-            img = pygame.transform.flip(self.image, False, True)
-            temp.blit(img, (0, ih))
+            rw = iw
+            rh = ih
+            t = self.image
+
+        # flip and blit image frame by frame
+        for y in range(0, ih, rh):
+            for x in range(0, iw, rw):
+                # extract frame
+                if t is not self.image:
+                    t.clear()
+                    t.blit(self.image, (0,0), area=(x,y,rw,rh))
+
+                # blit flipped frame
+                if horizontal:
+                    img = pygame.transform.flip(t, True, False)
+                    temp.blit(img, (iw+x, y))
+                else:
+                    img = pygame.transform.flip(t, False, True)
+                    temp.blit(img, (x, ih+y))
         
         # apply the new surface
         self.image = temp
