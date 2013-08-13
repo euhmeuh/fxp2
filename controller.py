@@ -80,6 +80,7 @@ class Controller:
             
             # test keys
             character = self.root.get_child("world/camera/character")
+            gauge = self.root.get_child("gui/gauge")
             if character:
                 character.frame = "idle"
                 if inputdev.check_key(Fxp.pygame.K_q):
@@ -90,6 +91,14 @@ class Controller:
                     character.apply_vector(self.VECTOR_RIGHT)
                     character.flip(state=False)
                     character.frame = "run"
+                if inputdev.check_key(Fxp.pygame.K_DOWN):
+                    gauge.life_amount -= 0.01
+                if inputdev.check_key(Fxp.pygame.K_UP):
+                    gauge.life_amount += 0.01
+                if inputdev.check_key(Fxp.pygame.K_LEFT):
+                    gauge.mana_amount -= 0.01
+                if inputdev.check_key(Fxp.pygame.K_RIGHT):
+                    gauge.mana_amount += 0.01
             
             # update cursor position
             cursor = self.root.get_child("gui/cursor")
@@ -157,7 +166,17 @@ class Controller:
     
     def on_world_collide(self, obj, response=None, data=None):
         obj1, obj2 = response
-        #print(obj1.name, obj2.name)
-    
 
+        character = self.root.get_child("world/camera/character")
+        tree = self.root.get_child("world/camera/tree")
+        ground = self.root.get_child("world/camera/ground2")
+        gauge = self.root.get_child("gui/gauge")
+
+        if (obj1 is character and obj2 is tree
+        or  obj2 is character and obj1 is tree):
+            gauge.life_amount += 0.001
+
+        if (obj1 is character and obj2 is ground
+        or  obj2 is character and obj1 is ground):
+            gauge.life_amount -= 0.001
 

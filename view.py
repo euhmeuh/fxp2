@@ -21,6 +21,117 @@
 import fxplib as Fxp
 
 import time
+import copy
+
+class Gauge(Fxp.Image):
+    def __init__(self, name):
+        # attributes
+        self.life_amount = 1.0
+        self.mana_amount = 1.0
+
+        self.life = None
+        self.mana = None
+
+        # init surface
+        Fxp.Image.__init__(self, name)
+        self.init_surface((72,95))
+
+        # load gauges
+        gauges = Fxp.Image("gauges", "packages/gauges.png")
+
+        # load fluids
+        self.life = Fxp.Image("fluid_life", "packages/gauges_fluid.png")
+        self.life.set_pos((9,23))
+        self.life.set_size((22,44))
+
+        self.mana = Fxp.Image("fluid_mana", "packages/gauges_fluid.png")
+        self.mana.set_pos((41,31))
+        self.mana.set_size((22,44))
+        self.mana.image.replace_color(Fxp.PALETTE.get_rgb("Red", "medium"),
+                                      Fxp.PALETTE.get_rgb("Blue", "medium"))
+        self.mana.image.replace_color(Fxp.PALETTE.get_rgb("Red", "dark"),
+                                      Fxp.PALETTE.get_rgb("Blue", "dark"))
+
+        # set fluid animation
+        fluid_frames = {}
+
+        fluid_frames["empty"] = Fxp.Frame((
+            (1000, (0,0)),
+            ))
+
+        fluid_frames["full"] = Fxp.Frame((
+            (200, (22,0)),
+            (200, (44,0)),
+            (200, (66,0)),
+            (200, (88,0)),
+            ))
+
+        self.life.frames = fluid_frames
+        self.life.frame = "full"
+
+        self.mana.frames = copy.deepcopy(fluid_frames)
+        self.mana.frame = "full"
+
+        # load text
+        self.life_text = Fxp.Label("label_life", "{}%".format(int(self.life_amount*100)),
+                                   Fxp.PALETTE.get_rgb("White", "light"),
+                                   Fxp.PALETTE.get_rgb("Black", "medium"))
+        self.life_text.set_pos((7,4))
+
+        self.mana_text = Fxp.Label("label_mana", "{}%".format(int(self.life_amount*100)),
+                                   Fxp.PALETTE.get_rgb("White", "light"),
+                                   Fxp.PALETTE.get_rgb("Black", "medium"))
+        self.mana_text.set_pos((39,9))
+
+        # priorities
+        self.life.z = -1.0
+        self.mana.z = -1.0
+
+        # pack
+        self.add_child(gauges)
+        self.add_child(self.life)
+        self.add_child(self.life_text)
+        self.add_child(self.mana)
+        self.add_child(self.mana_text)
+
+    def check_force(self):
+        self.check_amount("life")
+        self.check_amount("mana")
+
+        # update text
+        self.life_text.set_text("{}%".format(int(self.life_amount*100)))
+        self.mana_text.set_text("{}%".format(int(self.mana_amount*100)))
+
+        # render
+        Fxp.Image.check_force(self)
+
+    def check_amount(self, fluid):
+        # TODO : remove these magic numbers
+        lw, lh = 22, 44
+
+        amount = self.life_amount if fluid == "life" else self.mana_amount
+        obj = self.life if fluid == "life" else self.mana
+
+        # check amount
+        if amount <= 0:
+            amount = 0.0
+            obj.y_offset = 0
+            obj.set_size((lw, lh))
+            obj.frame = "empty"
+        elif amount <= 1:
+            obj.y_offset = (lh-7) - ((lh - 7) * amount)
+            obj.set_size((lw,lh - obj.y_offset))
+            obj.frame = "full"
+        else:
+            amount = 1.0
+            obj.y_offset = 0
+            obj.set_size((lw, lh))
+            obj.frame = "full"
+
+        if fluid == "life":
+            self.life_amount = amount
+        else:
+            self.mana_amount = amount
 
 class View:
     def __init__(self, model, size, scale_mode=None, fullscreen=False):
@@ -339,6 +450,7 @@ class View:
         button_options = Fxp.Button("button_options", text_option, "Blue")
         button_options.set_grid_size(self.grid_size)
         button_options.set_pos((2,2), grid=True)
+        button_options.set_state("INACTIVE")
         
         separator = Fxp.Separator("separator")
         separator.set_grid_size(self.grid_size)
@@ -347,7 +459,6 @@ class View:
         button_disconnect = Fxp.Button("button_disconnect", text_disconnect, "Orange")
         button_disconnect.set_grid_size(self.grid_size)
         button_disconnect.set_pos((2,6), grid=True)
-        #button_disconnect.set_state("INACTIVE")
         
         button_quit = Fxp.Button("button_quit", text_quit, "Red")
         button_quit.set_grid_size(self.grid_size)
@@ -355,6 +466,10 @@ class View:
         
         # create mouse cursor
         cursor = Fxp.Image("cursor", "packages/cursor.png")
+
+        # create life and mana gauges
+        gauge = Gauge("gauge")
+        gauge.set_rect((0,289,72,95))
         
         # create a window
         window = Fxp.Window("window")
@@ -441,6 +556,7 @@ class View:
         gui.add_child(window)
         gui.add_child(label_fps)
         gui.add_child(cursor)
+        gui.add_child(gauge)
         
         root.add_child(horizon)
         root.add_child(world)

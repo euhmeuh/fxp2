@@ -268,8 +268,13 @@ class Image (Object):
         self.set_size(size)
 
     def load_from_file(self, filename):
-        self.image = pygame.image.load(filename)
-        w, h = self.image.get_size()
+        image = pygame.image.load(filename)
+        w, h = image.get_size()
+
+        temp = Surface((w,h))
+        temp.blit(image, (0,0))
+
+        self.image = temp
         
         self.set_size((w, h))
 
@@ -432,6 +437,8 @@ class Image (Object):
         
         self.w = w * g
         self.h = h * g
+
+        self.force = True
     
     def get_size(self, grid=False):
         g = self.grid_size if grid else 1
