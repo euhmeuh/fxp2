@@ -40,7 +40,7 @@ class Object:
         self.objects = {}
         self.signals = {}
 
-        self.z = 0
+        self.z = 0.0
 
     def __repr__(self):
         string = "<Fxp."+self.__class__.__name__+" ("+str(self.name)+")>"
@@ -223,7 +223,7 @@ class Image (Object):
         self.y = 0
         self.w = 0
         self.h = 0
-        self.z = 0
+        self.z = 0.0
         
         self.x_offset = 0
         self.y_offset = 0
@@ -672,7 +672,6 @@ class Camera (MovingObject):
         
         self.active = True
         self.target = None
-        self.z_dist = 0
         self.zone = None
 
         self.fixed = True
@@ -1078,9 +1077,7 @@ class World (MovingObject):
         
         # apply collision function
         def do_collide(obj, obstacle, rect, orect):
-            # emit collide signal
-            self.emit_signal("collide", (obj, obstacle))
-            
+            collision = False
             # check for collide forces to apply
             for collide_obj in self.collide_objects:
                 col_name, col_obj = collide_obj
@@ -1089,11 +1086,17 @@ class World (MovingObject):
                     col_vector = self.collide_vectors[col_name](obj, obstacle,
                                                                 rect, orect)
                     obj.apply_vector(col_vector)
+                    collision = True
                 # apply collision to the obstacle
                 elif col_obj is obstacle:
                     col_vector = self.collide_vectors[col_name](obstacle, obj,
                                                                 orect, rect)
                     obstacle.apply_vector(col_vector)
+                    collision = True
+
+            # emit collide signal
+            if collision:
+                self.emit_signal("collide", (obj, obstacle, col_vector))
         
         solid_list = []
         get_solid(self, self.get_pos(), solid_list)

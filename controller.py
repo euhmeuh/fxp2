@@ -91,14 +91,6 @@ class Controller:
                     character.apply_vector(self.VECTOR_RIGHT)
                     character.flip(state=False)
                     character.frame = "run"
-                if inputdev.check_key(Fxp.pygame.K_DOWN):
-                    gauge.life_amount -= 0.01
-                if inputdev.check_key(Fxp.pygame.K_UP):
-                    gauge.life_amount += 0.01
-                if inputdev.check_key(Fxp.pygame.K_LEFT):
-                    gauge.mana_amount -= 0.01
-                if inputdev.check_key(Fxp.pygame.K_RIGHT):
-                    gauge.mana_amount += 0.01
             
             # update cursor position
             cursor = self.root.get_child("gui/cursor")
@@ -165,18 +157,29 @@ class Controller:
         self.quit_loop()
     
     def on_world_collide(self, obj, response=None, data=None):
-        obj1, obj2 = response
+        obj1, obj2, vector = response
 
         character = self.root.get_child("world/camera/character")
-        tree = self.root.get_child("world/camera/tree")
-        ground = self.root.get_child("world/camera/ground2")
-        gauge = self.root.get_child("gui/gauge")
+        ennemy    = self.root.get_child("world/camera/ennemy")
+        tree      = self.root.get_child("world/camera/tree")
+        ground    = self.root.get_child("world/camera/ground2")
+        gauge     = self.root.get_child("gui/gauge")
 
+        # tree heals
         if (obj1 is character and obj2 is tree
         or  obj2 is character and obj1 is tree):
             gauge.life_amount += 0.001
 
+        # ground hurts
         if (obj1 is character and obj2 is ground
         or  obj2 is character and obj1 is ground):
             gauge.life_amount -= 0.001
+
+        # ennemy hurts
+        if (obj1 is character and obj2 is ennemy
+        or  obj2 is character and obj1 is ennemy):
+            gauge.life_amount -= 0.1
+            r, a = vector.get_polar_pos()
+            vector.set_polar_pos((5,a))
+            character.apply_vector(-vector)
 

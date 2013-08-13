@@ -204,8 +204,6 @@ class View:
     def load_title(self):
         # create the input devices
         inputdev = Fxp.Input("inputdev")
-
-        print Fxp.Dimension("packages/_Title")
     
         # dimension background
         thumbnail = Fxp.Background("thumbnail")
@@ -442,6 +440,19 @@ class View:
 
         character.frames = char_frames
         character.frame = "idle"
+
+        # ennemy !
+        ennemy = Fxp.MovingObject("ennemy")
+        ennemy.load_from_file("packages/Manafia/common/base.png")
+        ennemy.set_size((42,46))
+        ennemy.set_pos((235,119))
+        ennemy.mirror(rect=(42,46))
+        ennemy.make_movable()
+        ennemy.solid = True
+        ennemy.hitboxes.append((13,16,25,30))
+
+        ennemy.frames = copy.deepcopy(char_frames)
+        ennemy.frame = "idle"
                 
         # create buttons   
         text_option     = "        Options       "
@@ -496,6 +507,7 @@ class View:
         #cloud1.add_const_vector(force_wind)
         #cloud2.add_const_vector(force_wind)
         character.add_const_vector(gravity)
+        ennemy.add_const_vector(gravity)
         
         # add world air friction
         def create_air_friction(obj):
@@ -505,11 +517,13 @@ class View:
         
         world.add_env_vector("air_friction", create_air_friction)
         world.add_env_object("air_friction", character)
+        world.add_env_object("air_friction", ennemy)
         world.add_env_object("air_friction", cloud1)
         world.add_env_object("air_friction", cloud2)
         
         world.add_collide_vector("repulsion", Fxp.simple_repulsion)
         world.add_collide_object("repulsion", character)
+        world.add_collide_object("repulsion", ennemy)
         
         # define priorities
         horizon.z     = -1.0
@@ -519,8 +533,11 @@ class View:
         cloud1.z      = -2.0
         cloud2.z      = -3.5
         ground1.z     = -1.0
-        ground2.z     = 0.0
-        character.z   = 1.0
+        portal.z      = 0.0
+        ground2.z     = 0.001
+        character.z   = 0.001
+        ennemy.z      = 0.001
+        tree.z        = 0.002
         gui.z         = 1.0
         world.z       = 0.0
         window.z      = 0.0
@@ -546,6 +563,7 @@ class View:
         camera.add_child(tree)
         camera.add_child(portal)
         camera.add_child(character)
+        camera.add_child(ennemy)
         
         world.add_child(camera)
         
