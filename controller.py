@@ -178,8 +178,22 @@ class Controller:
         # ennemy hurts
         if (obj1 is character and obj2 is ennemy
         or  obj2 is character and obj1 is ennemy):
+            print("{}".format(vector))
             gauge.life_amount -= 0.1
-            r, a = vector.get_polar_pos()
-            vector.set_polar_pos((5,a))
-            character.apply_vector(-vector)
+
+            cx, cy = character.get_center()
+            x, y   = character.get_pos()
+            x, y = x+cx, y+cy
+
+            ecx, ecy = ennemy.get_center()
+            ex, ey   = ennemy.get_pos()
+            ex, ey = ex+ecx, ey+ecy
+
+            dx, dy = x-ex, y-ey
+
+            if dx <= 0:
+                a = -0.75
+            else:
+                a = -0.25
+            character.apply_vector(Fxp.Vector(polar=(5,a)))
 
