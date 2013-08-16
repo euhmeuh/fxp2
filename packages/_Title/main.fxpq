@@ -2,7 +2,7 @@
 <!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <fxpq version="1.0">
 
-    <object id="dim_title" type="Fxp.Dimension">
+    <object id="dim_title" type="Dimension">
 
         <node id="info">
             <key id="name" type="string">Title screen</key>

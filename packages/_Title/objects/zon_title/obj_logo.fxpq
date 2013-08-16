@@ -1,11 +1,11 @@
-<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <fxpq version="1.0">
 
-    <object id="obj_logo" type="Fxp.Object">
+    <object id="obj_logo" type="MovingObject">
     
         <properties>
-            <rect x="0" y="0" w="0" h="0" />
+            <rect x="64" y="16" w="0" h="0" />
             <image src="/common/title.png" autoresize="true" />
         </properties>
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<fxpq version="1.0">
+
+    <object id="zon_title" type="Zone">
+    
+        <properties>
+            <rect x="0" y="0" w="512" h="384" />
+        </properties>
+
+        <node id="config">
+            <key id="starting_point_x" type="integer">0</key>
+            <key id="starting_point_y" type="integer">0</key>
+        </node>
+
+        <!-- Title -->
+        <child id="zon_title/obj_logo" />
+        
+        <!-- Press start prompt -->
+        <!-- <child id="zon_title/obj_press_start" /> -->
+        
+        <!-- Environment -->
+        <!-- <child id="zon_title/map_ground" /> -->
+        <!-- <child id="zon_title/cha_character" /> -->
+
+        <!-- Background -->
+        <!-- <child id="zon_title/obj_mask" /> -->
+        <!-- <child id="zon_title/obj_thumbnail" /> -->
+
+    </object>
+    
+</fxpq>
+

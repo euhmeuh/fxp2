@@ -45,9 +45,9 @@ class Object:
     def __repr__(self):
         string = "<Fxp."+self.__class__.__name__+" ("+str(self.name)+")>"
 
-        # children (not recursive)
+        # children (recursive)
         for child in self.objects.values():
-            string += "\n\t<Fxp."+child.__class__.__name__+" ("+str(child.name)+")>"
+            string += "\n\t"+str(child).replace("\t", "\t\t")
 
         return string
 
@@ -1183,59 +1183,104 @@ class Input (Object):
 # GAME SPECIFIC
 #-------------------------------------------------------------------------------
 
-class Dimension(Object):
+class Builder:
     def __init__(self, package):
-        # open main file
+        self.package = package
+
+        # extract package
+        # TODO
+
+        # create objects recursively
+        self.root = next(self.create_from_file(package+"/main.fxpq", type="Dimension", unique=True))
+
+    def create_from_file(self, file, type="", unique=False):
+        # parse file
         try:
-            file = ET.parse(package+"/main.fxpq")
+            tree = ET.parse(file)
         except Exception, e:
             raise e
 
+        # get active directory
+        directory = file[:file.rfind("/")]
+
         # get root element
-        fxpq = file.getroot()
+        fxpq = tree.getroot()
 
         # get version
         # TODO : if specs become to change in the future,
         #        manage versions to fit retro-compatibility
         version = fxpq.get("version")
 
-        # find first object with type "Fxp.Dimension"
-        dim = [o if o.get("type") == "Fxp.Dimension" else None
-                 for o in fxpq.findall("object")][0]
-        if dim is None: 
-            raise Exception("There is no object of type Fxp.Dimension in main.fxpq")
+        # for each object found
+        for i, obj in enumerate(fxpq.findall("object")):
+            # get name
+            id = obj.get("id")
 
-        # get name
-        name = dim.get("id")
+            # get type
+            t = obj.get("type")
 
-        # create instance
-        Object.__init__(self, name)
+            # check type
+            if type:
+                # pass incorrect type
+                if t != type:
+                    continue
 
-        # parse properties
-        properties = dim.find("properties")
-        if properties is not None:
-            for p in properties:
-                if p.tag == "rect":
-                    # rect property
-                    print "rect: "+str(p.attrib)
-                    pass
-                elif p.tag == "image":
-                    # image loading
-                    print "image: "+str(p.attrib)
-                    pass
-                else:
-                    raise Exception("The property \""+p.tag+"\" cannot be set for an object of type \"Fxp."+self.__class__.__name__+"\"")
+            # pass other objects if we wanted only one
+            if unique:
+                if i > 0:
+                    break
 
-        # parse nodes
-        # TODO
+            # create instance
+            try:
+                instance = globals()[t](id)
+            except Exception, e:
+                raise e
 
-        # parse scripts
-        # TODO
+            # parse properties
+            properties = obj.find("properties")
+            if properties is not None:
+                for p in properties:
+                    if p.tag == "rect":
+                        # rect property
+                        x = int(p.attrib["x"])
+                        y = int(p.attrib["y"])
+                        w = int(p.attrib["w"])
+                        h = int(p.attrib["h"])
+                        instance.set_rect((x, y, w, h))
+                    elif p.tag == "image":
+                        # image loading
+                        if p.attrib["src"]:
+                            instance.load_from_file(self.package+p.attrib["src"])
+                        if p.attrib["autoresize"] == "true":
+                            #instance.set_size() TODO
+                            pass
+                    else:
+                        raise Exception("The property \""+p.tag+"\" cannot be set for an object of type \"Fxp."+self.__class__.__name__+"\"")
 
-        # parse children
-        for child in dim.findall("child"):
-            path = child.get("id")
-            self.add_child(Object(package+"/"+path+".fxpq")) # TODO
+            print(instance.get_rect())
+
+            # parse nodes
+            # TODO
+
+            # parse scripts
+            # TODO
+
+            # parse children
+            for child in obj.findall("child"):
+                path = child.get("id")
+                for c in self.create_from_file(directory+"/"+path+".fxpq"):
+                    instance.add_child(c)
+
+            # return object
+            yield instance
+
+class Dimension(Image):
+    def __init__(self, name):
+        Image.__init__(self, name)
+
+class Zone(Image):
+    def __init__(self, name):
+        Image.__init__(self, name)
 
 #-------------------------------------------------------------------------------
 # USER INTERFACE

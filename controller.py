@@ -30,7 +30,7 @@ class Controller:
     
     def load_title(self):
         # load view
-        self.view.load_title()
+        self.view.load_new_title()
         self.root = self.view.root
         
         inputdev = self.root.get_child("inputdev")

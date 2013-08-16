@@ -186,7 +186,11 @@ class View:
         cursor = Fxp.Image("cursor", "packages/cursor.png")
 
         # create the root container
-        root = Fxp.Dimension("packages/_Title")
+        builder = Fxp.Builder("packages/_Title")
+        root = builder.root
+        root.load_from_solid_color(Fxp.PALETTE.get_rgb("White", "light"),
+                                   (self.get_width(), self.get_height()))
+        root.scale = self.scale
 
         # define priorities
         gui.z = 1
@@ -197,6 +201,9 @@ class View:
         
         root.add_child(inputdev)
         root.add_child(gui)
+
+
+        print(root)
         
         # send the root container
         self.root = root
