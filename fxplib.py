@@ -643,8 +643,8 @@ class MovingObject (Image):
         self.mass = 0
         self.hitboxes = []
 
-    def make_movable(self):
-        self.velocity = Vector("move", (0,0))
+    def make_movable(self, polar=(0,0)):
+        self.velocity = Vector("move", polar)
 
     def add_const_vector(self, vector):
         if not vector.name in self.const_vectors.keys():
@@ -783,8 +783,22 @@ class Background (MovingObject):
         else:
             self.v_mode = "duplicated"
     
-    def scroll(self, polar):
-        self.velocity = Vector("move", polar)
+    def scroll(self, direction="left", speed=1.0):
+        angle = 0.0
+        horizontal = True
+        if direction == "left":
+            angle = 1.0
+        elif direction == "right":
+            angle = 0.0
+        elif direction == "up":
+            angle = -0.5
+            horizontal = False
+        elif direction == "down":
+            angle = 0.5
+            horizontal = False
+
+        self.duplicate(horizontal)
+        self.make_movable((speed,angle))
 
     def extend(self, color, horizontal=True):
         pass # TODO

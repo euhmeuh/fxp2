@@ -11,9 +11,7 @@
 
 		<script name="init" exec="start">
 
-self.duplicate()
-self.make_movable()
-self.scroll((0.35,1))
+self.scroll("left", 0.35)
 
 		</script>
 
