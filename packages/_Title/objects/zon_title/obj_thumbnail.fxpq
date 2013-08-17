@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
+<fxpq version="1.0">
+
+    <object id="obj_thumbnail" type="Image">
+    
+        <properties>
+            <rect x="0" y="0" w="0" h="0" z="-2" />
+            <image src="/../Manafia/thumbnail.png" autoresize="true" />
+        </properties>
+
+    </object>
+    
+</fxpq>
+

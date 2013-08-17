@@ -1,8 +1,8 @@
-<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <fxpq version="1.0">
 
-    <object id="lbl_press_start" type="Fxp.Label">
+    <object id="lbl_press_start" type="Label">
         <script exec="start" >
 
             self.set_text("Press       to start")
@@ -12,17 +12,17 @@
         </script>
     </object>
 
-    <object id="obj_enterkey" type="Fxp.Object">
+    <object id="obj_enterkey" type="Image">
         <properties>
-            <rect x="0" y="0" w="0" h="0" />
+            <rect x="40" y="12" w="0" h="0" />
             <image src="/common/key_enter.png" autoresize="true" />
         </properties>
     </object>
 
-    <object id="obj_press_start" type="Fxp.Object">
+    <object id="obj_press_start" type="Image">
     
         <properties>
-            <rect x="0" y="0" w="0" h="0" />
+            <rect x="192" y="304" w="128" h="48" />
         </properties>
 
         <script exec="toggle" >

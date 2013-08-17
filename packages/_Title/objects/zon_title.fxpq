@@ -17,15 +17,15 @@
         <child id="zon_title/obj_logo" />
         
         <!-- Press start prompt -->
-        <!-- <child id="zon_title/obj_press_start" /> -->
+        <child id="zon_title/obj_press_start" />
         
         <!-- Environment -->
         <!-- <child id="zon_title/map_ground" /> -->
         <!-- <child id="zon_title/cha_character" /> -->
 
         <!-- Background -->
-        <!-- <child id="zon_title/obj_mask" /> -->
-        <!-- <child id="zon_title/obj_thumbnail" /> -->
+        <child id="zon_title/obj_mask" />
+        <child id="zon_title/obj_thumbnail" />
 
     </object>
     

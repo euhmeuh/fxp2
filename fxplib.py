@@ -1211,6 +1211,9 @@ class Builder:
         #        manage versions to fit retro-compatibility
         version = fxpq.get("version")
 
+        # create a temp list of read objects
+        templist = {}
+
         # for each object found
         for i, obj in enumerate(fxpq.findall("object")):
             # get name
@@ -1236,6 +1239,9 @@ class Builder:
             except Exception, e:
                 raise e
 
+            # register object
+            templist[id] = instance
+
             # parse properties
             properties = obj.find("properties")
             if properties is not None:
@@ -1247,6 +1253,15 @@ class Builder:
                         w = int(p.attrib["w"])
                         h = int(p.attrib["h"])
                         instance.set_rect((x, y, w, h))
+
+                        # priority (optional)
+                        try:
+                            z = int(p.attrib["z"])
+                        except KeyError, ValueError:
+                            pass
+                        else:
+                            instance.z = z
+
                     elif p.tag == "image":
                         # image loading
                         if p.attrib["src"]:
@@ -1257,8 +1272,6 @@ class Builder:
                     else:
                         raise Exception("The property \""+p.tag+"\" cannot be set for an object of type \"Fxp."+self.__class__.__name__+"\"")
 
-            print(instance.get_rect())
-
             # parse nodes
             # TODO
 
@@ -1268,8 +1281,22 @@ class Builder:
             # parse children
             for child in obj.findall("child"):
                 path = child.get("id")
-                for c in self.create_from_file(directory+"/"+path+".fxpq"):
-                    instance.add_child(c)
+                if path.find("/") >= 0:
+                    cid = path[path.find("/")+1:]
+                else:
+                    cid = path
+
+                # check for childs inside the current file
+                if cid in templist.keys():
+                    instance.add_child(templist[path])
+                else:
+                    # check inside child's file
+                    children = self.create_from_file(directory+"/"+path+".fxpq")
+                    
+                    # find object with corresponding id
+                    for c in children:
+                        if cid == c.name:
+                            instance.add_child(c)
 
             # return object
             yield instance
@@ -1343,14 +1370,15 @@ class Window (Image):
             self.open()
 
 class Label (Image):
-    def __init__(self, name, text, color, bg_color):
+    def __init__(self, name, text="", color=None, bg_color=None):
         Image.__init__(self, name)
         
         self.display = True
         
         self.text = text
-        self.color = color
-        self.bg_color = bg_color
+
+        self.color = color if color else PALETTE.get_rgb("White", "light")
+        self.bg_color = bg_color if bg_color else PALETTE.get_rgb("Black", "medium")
         
         # create signals
         # ...
@@ -1383,6 +1411,10 @@ class Label (Image):
         and self.bg_color == default_color):
             # swap front and bg
             self.image.replace_color(default_color, default_bg_color, swap=True)
+        elif (self.color == default_color
+        and self.bg_color == default_bg_color):
+            # don't swap anything
+            pass
         else:
             self.image.replace_color(default_color, self.color)
             self.image.replace_color(default_bg_color, self.bg_color)
