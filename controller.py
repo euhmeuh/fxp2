@@ -27,15 +27,25 @@ class Controller:
         
         self.quit = False
         self.root = None
+
+        # scenes
+        self.title = None
+        self.game = None
     
     def load_title(self):
-        # load view
-        self.view.load_new_title()
-        self.root = self.view.root
-        
-        inputdev = self.root.get_child("inputdev")
-        inputdev.connect_signal("quit", self.on_title_input_quit)
-        inputdev.connect_signal("keydown", self.on_title_input_keydown)
+        if self.title:
+            # change current root
+            self.root = self.title
+            self.view.root = self.title
+        else:
+            # load view
+            self.view.load_title()
+            self.title = self.view.root
+            self.root = self.title
+            
+            inputdev = self.root.get_child("inputdev")
+            inputdev.connect_signal("quit", self.on_title_input_quit)
+            inputdev.connect_signal("keydown", self.on_title_input_keydown)
 
     def load_game(self):
         # load view
@@ -181,7 +191,6 @@ class Controller:
         # ennemy hurts
         if (obj1 is character and obj2 is ennemy
         or  obj2 is character and obj1 is ennemy):
-            print("{}".format(vector))
             gauge.life_amount -= 0.1
 
             cx, cy = character.get_center()

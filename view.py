@@ -173,7 +173,7 @@ class View:
         self.screen.set_colorkey(Fxp.PALETTE.colorkey)
         self.screen.fill(Fxp.PALETTE.get_rgb("Black", "dark"))
 
-    def load_new_title(self):
+    def load_title(self):
         # create the input devices
         inputdev = Fxp.Input("inputdev")
 
@@ -200,89 +200,6 @@ class View:
         gui.add_child(cursor)
         
         root.add_child(inputdev)
-        root.add_child(gui)
-
-
-        print(root)
-        
-        # send the root container
-        self.root = root
-
-    def load_title(self):
-        # create the input devices
-        inputdev = Fxp.Input("inputdev")
-    
-        # dimension background
-        thumbnail = Fxp.Background("thumbnail")
-        thumbnail.load_from_file("packages/Manafia/thumbnail.png")
-        thumbnail.duplicate()
-        thumbnail.make_movable()
-        
-        # white mask
-        mask = Fxp.Image("mask")
-        mask.load_from_file("packages/_Title/common/title_bg.png")
-        
-        # title
-        title = Fxp.Image("title")
-        title.load_from_file("packages/_Title/common/title.png")
-        title.set_pos((64,16))
-        
-        # "enter" key image
-        enterkey = Fxp.Image("enterkey")
-        enterkey.load_from_file("packages/_Title/common/key_enter.png")
-        enterkey.set_pos((232,316))
-        
-        # "press start" label
-        label_start = Fxp.Label("label_start", "Press       to start",
-                                Fxp.PALETTE.get_rgb("Blue", "light"),
-                                Fxp.PALETTE.get_rgb("White", "medium"))
-        label_start.set_pos((196,320))
-        
-        # version label
-        label_version = Fxp.Label("label_version", "0.1",
-                                  Fxp.PALETTE.get_rgb("Blue", "light"),
-                                  Fxp.PALETTE.get_rgb("White", "medium"))
-        label_version.set_pos((492,376))
-        
-        # create the gui layer
-        gui = Fxp.Image("gui")
-        gui.set_size(self.get_size())
-        gui.init_surface(self.get_size())
-        
-        # create mouse cursor
-        cursor = Fxp.Image("cursor", "packages/cursor.png")
-        
-        # create the root container
-        root = Fxp.Image("root")
-        root.load_from_solid_color(Fxp.PALETTE.get_rgb("White", "light"),
-                                   (self.get_width(), self.get_height()))
-        root.scale = self.scale
-        
-        # create forces
-        force_scrolling = Fxp.Vector("scrolling", (0.35,1))
-        
-        # apply forces
-        thumbnail.apply_vector(force_scrolling)
-        
-        # define priorities
-        thumbnail.z = -2
-        mask.z = -1
-        title.z = 0
-        enterkey.z = 0
-        label_start.z = 0
-        gui.z = 1
-        cursor.z = 10
-        
-        # pack objects
-        gui.add_child(cursor)
-        
-        root.add_child(inputdev)
-        root.add_child(thumbnail)
-        root.add_child(mask)
-        root.add_child(title)
-        root.add_child(enterkey)
-        root.add_child(label_start)
-        root.add_child(label_version)
         root.add_child(gui)
         
         # send the root container

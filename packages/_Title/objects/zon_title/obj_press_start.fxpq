@@ -10,6 +10,7 @@
 
         <script name="init" exec="start" >
 
+# set text and color
 self.set_text("Press       to start")
 self.set_color(context.palette.get_rgb("Blue", "light"),
                context.palette.get_rgb("White", "medium"))
@@ -29,14 +30,6 @@ self.set_color(context.palette.get_rgb("Blue", "light"),
         <properties>
             <rect x="192" y="304" w="128" h="48" />
         </properties>
-
-        <script name="activate" exec="toggle" >
-
-            if (event.type = "click" and self.clicked = True)
-            or (event.type = "keyboard" and event.key = "return")
-                pass # TODO
-
-        </script>
 
         <child id="lbl_press_start" />
         <child id="obj_enterkey" />

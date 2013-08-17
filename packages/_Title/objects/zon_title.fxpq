@@ -2,6 +2,21 @@
 <!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <fxpq version="1.0">
 
+    <object id="lbl_version" type="Label">
+        <properties>
+            <rect x="492" y="376" w="0" h="0" />
+        </properties>
+
+        <script name="init" exec="start" >
+
+# set text and color
+self.set_text("0.1")
+self.set_color(context.palette.get_rgb("Blue", "light"),
+               context.palette.get_rgb("White", "medium"))
+
+        </script>
+    </object>
+
     <object id="zon_title" type="Zone">
     
         <properties>
@@ -15,6 +30,7 @@
 
         <!-- Title -->
         <child id="zon_title/obj_logo" />
+        <child id="lbl_version" />
         
         <!-- Press start prompt -->
         <child id="zon_title/obj_press_start" />

@@ -2,12 +2,20 @@
 <!DOCTYPE FXPQ PUBLIC "-//Poupoule Studios//DTD FXPQ 0.1//EN" "http://www.poupoulestudios.fr/fxpq.dtd">
 <fxpq version="1.0">
 
-    <object id="obj_thumbnail" type="Image">
+    <object id="obj_thumbnail" type="Background">
     
         <properties>
             <rect x="0" y="0" w="0" h="0" z="-2" />
             <image src="/../Manafia/thumbnail.png" autoresize="true" />
         </properties>
+
+		<script name="init" exec="start">
+
+self.duplicate()
+self.make_movable()
+self.scroll((0.35,1))
+
+		</script>
 
     </object>
     

@@ -783,6 +783,9 @@ class Background (MovingObject):
         else:
             self.v_mode = "duplicated"
     
+    def scroll(self, polar):
+        self.velocity = Vector("move", polar)
+
     def extend(self, color, horizontal=True):
         pass # TODO
 
