@@ -3,11 +3,16 @@
 <fxpq version="1.0">
 
     <object id="lbl_press_start" type="Label">
-        <script exec="start" >
 
-            self.set_text("Press       to start")
-            self.set_color(context.palette("Blue", "light"),
-                           context.palette("White", "medium"))
+        <properties>
+            <rect x="4" y="16" w="0" h="0" />
+        </properties>
+
+        <script name="init" exec="start" >
+
+self.set_text("Press       to start")
+self.set_color(context.palette.get_rgb("Blue", "light"),
+               context.palette.get_rgb("White", "medium"))
 
         </script>
     </object>
@@ -25,7 +30,7 @@
             <rect x="192" y="304" w="128" h="48" />
         </properties>
 
-        <script exec="toggle" >
+        <script name="activate" exec="toggle" >
 
             if (event.type = "click" and self.clicked = True)
             or (event.type = "keyboard" and event.key = "return")

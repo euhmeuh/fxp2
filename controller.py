@@ -103,6 +103,9 @@ class Controller:
             gui = self.root.get_child("gui")
             if gui: gui.update_state(inputdev.mouse_but)
             
+            # execute scripts
+            self.root.execute()
+
             # move objects
             self.root.move_all()
             

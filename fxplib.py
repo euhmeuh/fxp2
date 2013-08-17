@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import pygame
 pygame.init()
 
@@ -39,6 +41,7 @@ class Object:
         self.name = name
         self.objects = {}
         self.signals = {}
+        self.scripts = {}
 
         self.z = 0.0
 
@@ -123,6 +126,36 @@ class Object:
     def move_all(self, vectors=True, move=True):
         for obj in self.objects.values():
             obj.move_all(vectors, move)
+
+    # NOTE : recursive
+    def execute(self):
+        for obj in self.objects.values():
+            obj.execute()
+
+        # execute scripts
+        for name, script in self.scripts.items():
+            exec_type, text = script
+            if exec_type == "start":
+                self.eval(text)
+                self.scripts.pop(name)
+            elif exec_type == "toggle":
+                pass
+            elif exec_type == "loop":
+                self.eval(text)
+            else:
+                pass
+
+    def eval(self, text):
+        # create context
+        context = Bunch(palette=PALETTE)
+
+        # execute
+        try:
+            exec text in {"__builtins__":None}, {"print":print,
+                                                 "self":self,
+                                                 "context":context}
+        except Exception, e:
+            raise e
 
 class Signal:
     def __init__(self, name):
@@ -1248,11 +1281,15 @@ class Builder:
                 for p in properties:
                     if p.tag == "rect":
                         # rect property
-                        x = int(p.attrib["x"])
-                        y = int(p.attrib["y"])
-                        w = int(p.attrib["w"])
-                        h = int(p.attrib["h"])
-                        instance.set_rect((x, y, w, h))
+                        try:
+                            x = int(p.attrib["x"])
+                            y = int(p.attrib["y"])
+                            w = int(p.attrib["w"])
+                            h = int(p.attrib["h"])
+                        except ValueError, e:
+                            raise e
+                        else:
+                            instance.set_rect((x, y, w, h))
 
                         # priority (optional)
                         try:
@@ -1276,7 +1313,9 @@ class Builder:
             # TODO
 
             # parse scripts
-            # TODO
+            for script in obj.findall("script"):
+                if script.get("name") and script.get("exec") and script.text:
+                    instance.scripts[script.get("name")] = (script.get("exec"), script.text.strip())
 
             # parse children
             for child in obj.findall("child"):
@@ -1724,6 +1763,15 @@ class BinaryString:
         
         # convert string to binary integers
         self.array = bytearray(string, "ascii")
+
+#-------------------------------------------------------------------------------
+# TOOLS
+#-------------------------------------------------------------------------------
+
+# Thanks to Alex Martelli
+class Bunch:
+    def __init__(self, **kwds):
+        self.__dict__.update(kwds)
 
 #-------------------------------------------------------------------------------
 # BUILT-IN FUNCTIONS

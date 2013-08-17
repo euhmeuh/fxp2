@@ -9,11 +9,11 @@
             <image src="/common/title.png" autoresize="true" />
         </properties>
 
-        <script exec="start" >
+        <script name="init" exec="start" >
 
-            # Title comes from the top of the screen
-            self.rect.y -= self.rect.h
-            self.transition("linear", (self.rect.x, 0))
+# Title comes from the top of the screen
+#self.rect.y = -self.rect.h
+#self.transition("linear", (self.rect.x, 16))
 
         </script>
 
