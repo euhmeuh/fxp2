@@ -124,10 +124,10 @@ The code is composed of very few files :
 
 #### How it works
 
-The game starts by running *fxp2.py*, which creates a `view`, a `model` and a `controller`.
-Then *fxp2.py* calls `load_title()` from the `controller` to load the title screen.
-After that, *fxp2.py* calls `controller.loop()` to start the game loop.
-
+The game starts by running *fxp2.py*, which creates a `view`, a `model` and a `controller`.  
+Then *fxp2.py* calls `load_title()` from the `controller` to load the title screen.  
+After that, *fxp2.py* calls `controller.loop()` to start the game loop.  
+ 
 The game will run until the `controller` calls `quit_loop()`.
 
 [→ Visit the wiki for further details](https://github.com/euhmeuh/fxp2/wiki)
