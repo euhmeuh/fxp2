@@ -706,7 +706,8 @@ class Camera (MovingObject):
         
         self.active = True
         self.target = None
-        self.zone = None
+        self.loose = 0 # TODO
+        self.speed = 0.5
 
         self.fixed = True
 
@@ -741,7 +742,7 @@ class Camera (MovingObject):
                     for child in children:
                         d = distance(child.z, self.target.z, priority_diff)
                         # apply camera vector
-                        child.move(self.velocity * d)
+                        child.move(self.velocity * d * self.speed)
         
         # move children and self
         MovingObject.move_all(self, vectors, move)
