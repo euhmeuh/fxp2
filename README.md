@@ -110,5 +110,24 @@ Links will be added soon... (TODO)
 
 ### Code architecture
 
-TODO
+#### Files
 
+The code is composed of very few files :
+
+| File          |Type              | Description / Usage                                                  |
+|---------------|------------------|----------------------------------------------------------------------|
+| fxp2.py       | Starter file     | Launch the game                                                      |
+| view.py       | View layer       | Manage how things are displayed on screen                            |
+| model.py      | Model layer      | Define the logic and the gameplay of the game                        |
+| controller.py | Controller layer | Make the `model` and the `view` work together and process user input |
+| fxplib.py     | Core engine      | Provide game features like a display system or a physic engine       |
+
+#### How it works
+
+The game starts by running *fxp2.py*, which creates a `view`, a `model` and a `controller`.
+Then *fxp2.py* calls `load_title()` from the `controller` to load the title screen.
+After that, *fxp2.py* calls `controller.loop()` to start the game loop.
+
+The game will run until the `controller` calls `quit_loop()`.
+
+[→ Visit the wiki for further details](https://github.com/euhmeuh/fxp2/wiki)
