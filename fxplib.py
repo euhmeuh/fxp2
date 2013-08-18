@@ -42,6 +42,7 @@ class Object:
         self.objects = {}
         self.signals = {}
         self.scripts = {}
+        self.data = {}
 
         self.z = 0.0
 
@@ -1264,6 +1265,9 @@ class Builder:
         # create a temp list of read objects
         templist = {}
 
+        # flag to know if an object has been found
+        found = False
+
         # for each object found
         for i, obj in enumerate(fxpq.findall("object")):
             # get name
@@ -1280,8 +1284,11 @@ class Builder:
 
             # pass other objects if we wanted only one
             if unique:
-                if i > 0:
+                if found:
                     break
+
+            # we passed the type check, so we found an object
+            found = True
 
             # create instance
             try:
@@ -1327,7 +1334,19 @@ class Builder:
                         raise Exception("The property \""+p.tag+"\" cannot be set for an object of type \"Fxp."+self.__class__.__name__+"\"")
 
             # parse nodes
-            # TODO
+            for node in obj.findall("node"):
+                # create a new node
+                new_node = {}
+
+                # find keys
+                for key in node.findall("key"):
+                    key_id = key.get("id")
+                    key_type = key.get("type")
+                    new_node[key_id] = (key_type, key.text)
+
+                # add the node to the instance
+                node_id = node.get("id")
+                instance.data[node_id] = new_node
 
             # parse scripts
             for script in obj.findall("script"):

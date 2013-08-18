@@ -192,6 +192,8 @@ class View:
                                    (self.get_width(), self.get_height()))
         root.scale = self.scale
 
+        print(root.data)
+
         # define priorities
         gui.z = 1
         cursor.z = 10
