@@ -38,11 +38,17 @@ class Controller:
             self.root = self.title
             self.view.root = self.title
         else:
-            # load view
-            self.view.load_title()
-            self.title = self.view.root
-            self.root = self.title
+            # load package
+            root = self.model.load_package("_Title", self.view.get_size(), self.view.scale)
+            self.root = root
+
+            # cache object tree
+            self.title = root
+
+            # send object tree to the view
+            self.view.root = root
             
+            # connect signals
             inputdev = self.root.get_child("inputdev")
             inputdev.connect_signal("quit", self.on_title_input_quit)
             inputdev.connect_signal("keydown", self.on_title_input_keydown)

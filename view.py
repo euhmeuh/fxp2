@@ -173,40 +173,6 @@ class View:
         self.screen.set_colorkey(Fxp.PALETTE.colorkey)
         self.screen.fill(Fxp.PALETTE.get_rgb("Black", "dark"))
 
-    def load_title(self):
-        # create the input devices
-        inputdev = Fxp.Input("inputdev")
-
-        # create the gui layer
-        gui = Fxp.Image("gui")
-        gui.set_size(self.get_size())
-        gui.init_surface(self.get_size())
-        
-        # create mouse cursor
-        cursor = Fxp.Image("cursor", "packages/cursor.png")
-
-        # create the root container
-        builder = Fxp.Builder("packages/_Title")
-        root = builder.root
-        root.load_from_solid_color(Fxp.PALETTE.get_rgb("White", "light"),
-                                   (self.get_width(), self.get_height()))
-        root.scale = self.scale
-
-        print(root.data)
-
-        # define priorities
-        gui.z = 1
-        cursor.z = 10
-
-        # pack objects
-        gui.add_child(cursor)
-        
-        root.add_child(inputdev)
-        root.add_child(gui)
-        
-        # send the root container
-        self.root = root
-
     def load_game(self):
         # create the gui layer
         gui = Fxp.Image("gui")
