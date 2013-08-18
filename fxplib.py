@@ -706,8 +706,7 @@ class Camera (MovingObject):
         
         self.active = True
         self.target = None
-        self.loose = 0 # TODO
-        self.speed = 0.5
+        self.loose = 512
 
         self.fixed = True
 
@@ -724,9 +723,20 @@ class Camera (MovingObject):
     def move_all(self, vectors=True, move=True):
         if move:
             if self.active:
+                # the speed at which the camera follows the target
+                # 1.0 means instant, 0.0 means never
+                speed = 1.0
+
                 # update the camera vector
                 if self.target:
                     self.update_vector()
+
+                    # the speed is defined by the distance between the target
+                    # and the center of the camera
+                    r, a = self.velocity.get_polar_pos()
+                    if self.loose > 0:
+                        speed = r / self.loose
+                    print("{} {}".format(r,speed))
 
                 # get the opposite of the target movement
                 x = self.velocity.x
@@ -742,7 +752,7 @@ class Camera (MovingObject):
                     for child in children:
                         d = distance(child.z, self.target.z, priority_diff)
                         # apply camera vector
-                        child.move(self.velocity * d * self.speed)
+                        child.move(self.velocity * d * speed)
         
         # move children and self
         MovingObject.move_all(self, vectors, move)
