@@ -12,8 +12,8 @@
         <script name="init" exec="start" >
 
 # Title comes from the top of the screen
-#self.rect.y = -self.rect.h
-#self.transition("linear", (self.rect.x, 16))
+#self.y = -self.h
+#self.transition("linear", "down", self.h, 800)
 
         </script>
 
