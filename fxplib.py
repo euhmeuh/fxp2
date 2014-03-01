@@ -25,6 +25,7 @@ pygame.init()
 
 import math
 import operator
+import random
 import xml.etree.ElementTree as ET
 
 # global palette and font are
@@ -267,6 +268,8 @@ class Image (Object):
         self.h = 0
         self.z = 0.0
 
+        self.fixed_to = None
+
         self.x_offset = 0
         self.y_offset = 0
 
@@ -494,6 +497,26 @@ class Image (Object):
         w, h = self.get_size()
         return (w / 2, h / 2)
 
+    def fix_to(self, obj, border, offset=0, fixed=False):
+        r"""Fix the border of self to the border of another object.
+        The position is updated when the tick method is called.
+        """
+        w, h = self.get_size()
+        ow, oh = obj.get_size()
+        if border in ['left', 'right']:
+            x = -w if border == "left" else ow
+            x += offset
+            y = 0 if fixed else None
+        elif border in ['top', 'bottom']:
+            x = 0 if fixed else None
+            y = -h if border == "top" else oh
+            y += offset
+        else:
+            raise ValueError("'border' value must be 'left', 'right',"
+                             " 'top' or 'bottom'.")
+
+        self.fixed_to = (obj, (x, y))
+
     # NOTE : recursive
     def check_force(self):
         if self.display:
@@ -553,6 +576,17 @@ class Image (Object):
     def tick(self, time):
         Object.tick(self, time)
 
+        # position update
+        if self.fixed_to:
+            obj, pos = self.fixed_to
+            sx, sy = self.get_pos()
+            ox, oy = obj.get_pos()
+            x = ox + pos[0] if pos[0] is not None else sx
+            y = oy + pos[1] if pos[1] is not None else sy
+
+            self.set_pos((x, y))
+
+        # animation update
         if self.frames:
             # check if the time spent exceeded the frame delay
             if time - self.last_tick > self.frames[self.frame].delay:
@@ -886,6 +920,7 @@ class Map (MovingObject):
         self.header = []
         self.tiles = []
         self.tilesets = {}
+        self.mixables = []
         self.void = ""
         self.tile_size = tile_size
         self.tiles_w = 0
@@ -901,7 +936,7 @@ class Map (MovingObject):
 
         # check header and version
         if(array[:3] != b"FXP"
-        or array[3] != 0):
+        or array[3] != 1):
             return
 
         # get tile palette
@@ -971,37 +1006,23 @@ class Map (MovingObject):
     def get_rule(self, pos):
         rule = 0x00
 
-        # get upper-left (0x80)
-        if self.get_tile(pos, (-1, -1)):
-            rule += 0x80
+        tile = self.get_tile(pos, (0, 0))  # get itself
 
-        # get upper-middle (0x40)
-        if self.get_tile(pos, (0, -1)):
-            rule += 0x40
-
-        # get upper-right (0x20)
-        if self.get_tile(pos, (1, -1)):
-            rule += 0x20
-
-        # get middle-left (0x10)
-        if self.get_tile(pos, (-1, 0)):
-            rule += 0x10
-
-        # get middle-right (0x08)
-        if self.get_tile(pos, (1, 0)):
-            rule += 0x08
-
-        # get bottom-left (0x04)
-        if self.get_tile(pos, (-1, 1)):
-            rule += 0x04
-
-        # get bottom-middle (0x02)
-        if self.get_tile(pos, (0, 1)):
-            rule += 0x02
-
-        # get bottom-right (0x01)
-        if self.get_tile(pos, (1, 1)):
-            rule += 0x01
+        # get other positions
+        positions = {
+            0x80: (-1, -1),  # upper-left
+            0x40: (0, -1),   # upper-middle
+            0x20: (1, -1),   # upper-right
+            0x10: (-1, 0),   # middle-left
+            0x08: (1, 0),    # middle-right
+            0x04: (-1, 1),   # bottom-left
+            0x02: (0, 1),    # bottom-middle
+            0x01: (1, 1)     # bottom-right
+        }
+        for val, p in positions.items():
+            t = self.get_tile(pos, p)
+            if t in self.mixables or t == tile:
+                rule += val
 
         # return the rule
         return rule
@@ -1009,8 +1030,10 @@ class Map (MovingObject):
     def set_void(self, name):
         self.void = name
 
-    def add_tileset(self, tileset):
+    def add_tileset(self, tileset, mixable=True):
         self.tilesets[tileset.name] = tileset
+        if mixable:
+            self.mixables.append(self.header.index(tileset.name))
 
     def update_collisions(self):
         # nested utility function
@@ -1167,8 +1190,9 @@ class World (MovingObject):
             ax, ay = pos
             rx, ry = obj.get_pos()
             pos = (ax + rx, ay + ry)
-            if obj.solid:
-                obj_list.append((obj, pos))
+            if hasattr(obj, 'solid'):
+                if obj.solid:
+                    obj_list.append((obj, pos))
 
             for child in obj.objects.values():
                 get_solid(child, pos, obj_list)
@@ -1721,6 +1745,8 @@ class Tileset:
         self.rules[name] = (tile, flag, mask)
 
     def get_tile(self, pos):
+        if isinstance(pos, list):
+            pos = random.choice(pos)
         x, y = pos
         index = y * self.w + x
 
@@ -1879,7 +1905,7 @@ class BinaryString:
         f.close()
 
         # convert string to binary integers
-        self.array = bytearray(string, "ascii")
+        self.array = bytearray(string)
 
 
 #------------------------------------------------------------------------------

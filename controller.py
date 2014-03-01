@@ -165,7 +165,7 @@ class Controller:
             camera = self.root.get_child("world/camera")
             camera.target = character
         if key == Fxp.pygame.K_g:
-            tree = self.root.get_child("world/camera/tree")
+            tree = self.root.get_child("world/camera/ennemy")
             camera = self.root.get_child("world/camera")
             camera.target = tree
         if key == Fxp.pygame.K_SPACE:
@@ -194,11 +194,6 @@ class Controller:
         if (obj1 is character and obj2 is tree
         or  obj2 is character and obj1 is tree):
             gauge.life_amount += 0.001
-
-        # ground hurts
-        if (obj1 is character and obj2 is ground
-        or  obj2 is character and obj1 is ground):
-            gauge.life_amount -= 0.001
 
         # ennemy hurts
         if (obj1 is character and obj2 is ennemy

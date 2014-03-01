@@ -58,14 +58,14 @@ class Gauge(Fxp.Image):
 
         fluid_frames["empty"] = Fxp.Frame((
             (1000, (0, 0)),
-            ))
+        ))
 
         fluid_frames["full"] = Fxp.Frame((
             (200, (22, 0)),
             (200, (44, 0)),
             (200, (66, 0)),
             (200, (88, 0)),
-            ))
+        ))
 
         self.life.frames = fluid_frames
         self.life.frame = "full"
@@ -143,8 +143,7 @@ class View:
 
         # screen size and options
         w, h = size
-        if (scale_mode == "scale2x"
-        or  scale_mode == "simple"):
+        if scale_mode == "scale2x" or scale_mode == "simple":
             w *= 2
             h *= 2
 
@@ -232,6 +231,19 @@ class View:
         ground1.duplicate()
         ground1.make_movable()
 
+        # create cave background
+        cave1 = Fxp.Background("cave1")
+        cave1.load_from_file("packages/Manafia/maps/Golfia/cave1.png")
+        cave1.duplicate()
+        cave1.make_movable()
+        cave1.fix_to(ground1, "bottom")
+
+        cave2 = Fxp.Background("cave2")
+        cave2.load_from_file("packages/Manafia/maps/Golfia/cave2.png")
+        cave2.duplicate()
+        cave2.make_movable()
+        cave2.fix_to(ground1, "bottom")
+
         dirt = Fxp.Tileset("dirt", "packages/Manafia/maps/Golfia/dirt.png", 16)
         dirt.solid = True
         dirt.add_rule("ul", (0, 0), 0x2F, mask=0xDB)
@@ -249,31 +261,34 @@ class View:
         dirt.add_rule("cul", (4, 1), 0x7F)
         dirt.add_rule("cdr", (3, 2), 0xDB)
         dirt.add_rule("cdl", (4, 2), 0x7E)
+        grass = Fxp.Tileset("grass",
+                            "packages/Manafia/maps/Golfia/grass.png", 16)
+        grass.solid = False
+        grass.add_rule("left", [(0, 0), (3, 0)], 0x08, mask=0x18)
+        grass.add_rule("middle", (1, 0), 0x18, mask=0x18)
+        grass.add_rule("right", [(2, 0), (4, 0)], 0x10, mask=0x18)
+        grass.add_rule("small", [(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)], 0x00,
+                       mask=0x18)
         ground2 = Fxp.Map("ground2", 16,
                           "packages/Manafia/maps/Golfia/golfia.map")
-        ground2.set_size((self.get_width(), self.get_height()))
+        ground2.set_size((3072, 1536))
         ground2.set_void("air")
         ground2.add_tileset(dirt)
+        ground2.add_tileset(grass, mixable=False)
         ground2.make_movable()
         ground2.solid = True
 
-        # FIXME this is a test
-#        ground2.set_tile(0, (12,18))
-#        ground2.set_tile(0, (12,18), (1,0))
-#        ground2.set_tile(0, (12,18), (0,1))
-#        ground2.set_tile(0, (12,18), (1,1))
-#        ground2.set_tile(0, (16,17))
-
         # FIXME (remove me)
         ground2.update_collisions()
-#        loop = 0
-#        for hitbox in ground2.hitboxes:
-#            rx, ry, rw, rh = hitbox
-#            robj = Fxp.Image("obj"+str(loop))
-#            robj.load_from_solid_color(Fxp.PALETTE.get_rgb("Red", "light"), (rw-4,rh-4))
-#            robj.set_pos((rx+2,ry+2))
-#            ground2.add_child(robj)
-#            loop += 1
+        # loop = 0
+        # for hitbox in ground2.hitboxes:
+        #     rx, ry, rw, rh = hitbox
+        #     robj = Fxp.Image("obj"+str(loop))
+        #     robj.load_from_solid_color(Fxp.PALETTE.get_rgb("Red", "light"),
+        #                                (rw-4,rh-4))
+        #     robj.set_pos((rx+2,ry+2))
+        #     ground2.add_child(robj)
+        #     loop += 1
 
         # I'd like to be a tree !
         tree = Fxp.MovingObject("tree")
@@ -300,7 +315,7 @@ class View:
             (100, (160 * 5, 0)),
             (100, (160 * 6, 0)),
             (100, (160 * 7, 0))
-            ))
+        ))
 
         portal.frames = portal_frames
         portal.frame = "idle"
@@ -324,7 +339,7 @@ class View:
             (100, (42 * 3, 0)),
             (100, (42 * 4, 0)),
             (100, (42 * 5, 0))
-            ))
+        ))
 
         char_frames["run"] = Fxp.Frame((
             (100, (0, 46)),
@@ -335,7 +350,7 @@ class View:
             (100, (42 * 5, 46)),
             (100, (42 * 6, 46)),
             (150, (42 * 7, 46))
-            ))
+        ))
 
         character.frames = char_frames
         character.frame = "idle"
@@ -354,9 +369,9 @@ class View:
         ennemy.frame = "idle"
 
         # create buttons
-        text_option     = "        Options       "
-        text_disconnect = "  Return to main menu "
-        text_quit       = "     Quit the game    "
+        text_option = "Options".center(22)
+        text_disconnect = "Return to main menu".center(22)
+        text_quit = "Quit the game".center(22)
         button_options = Fxp.Button("button_options", text_option, "Blue")
         button_options.set_grid_size(self.grid_size)
         button_options.set_pos((2, 2), grid=True)
@@ -400,7 +415,7 @@ class View:
         root.scale = self.scale
 
         # create forces
-        force_wind = Fxp.Vector("wind", (0.035, 1))
+        #force_wind = Fxp.Vector("wind", (0.035, 1))
         gravity = Fxp.Vector("gravity", (0.5, 0.5))
 
         # apply forces
@@ -426,27 +441,29 @@ class View:
         world.add_collide_object("repulsion", ennemy)
 
         # define priorities
-        horizon.z     = -1.0
-        camera.z      = 0.0
-        mountain1.z   = -4.0
-        mountain2.z   = -3.0
-        cloud1.z      = -2.0
-        cloud2.z      = -3.5
-        ground1.z     = -1.0
-        portal.z      = 0.0
-        ground2.z     = 0.001
-        character.z   = 0.001
-        ennemy.z      = 0.001
-        tree.z        = 0.002
-        gui.z         = 1.0
-        world.z       = 0.0
-        window.z      = 0.0
-        button_options.z    = 1.0
-        separator.z         = 1.0
+        horizon.z = -1.0
+        camera.z = 0.0
+        mountain1.z = -4.0
+        mountain2.z = -3.0
+        cave1.z = -1.0
+        cave2.z = -2.0
+        cloud1.z = -2.0
+        cloud2.z = -3.5
+        ground1.z = -1.0
+        portal.z = 0.0
+        character.z = 0.001
+        ennemy.z = 0.001
+        tree.z = 0.002
+        ground2.z = 0.003
+        gui.z = 1.0
+        world.z = 0.0
+        window.z = 0.0
+        button_options.z = 1.0
+        separator.z = 1.0
         button_disconnect.z = 1.0
-        button_quit.z       = 1.0
-        label_fps.z   = 9.0
-        cursor.z      = 10.0
+        button_quit.z = 1.0
+        label_fps.z = 9.0
+        cursor.z = 10.0
 
         # define camera target
         camera.target = character
@@ -456,6 +473,8 @@ class View:
         # pack objects
         camera.add_child(mountain1)
         camera.add_child(mountain2)
+        camera.add_child(cave1)
+        camera.add_child(cave2)
         camera.add_child(cloud1)
         camera.add_child(cloud2)
         camera.add_child(ground1)
@@ -503,8 +522,7 @@ class View:
             return (self.width, self.height)
 
     def is_scale(self):
-        if (self.scale == "scale2x"
-        or  self.scale == "simple"):
+        if (self.scale == "scale2x" or self.scale == "simple"):
             return True
         else:
             return False
